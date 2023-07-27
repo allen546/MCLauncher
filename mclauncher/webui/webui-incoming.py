@@ -2,6 +2,7 @@
 # EDIT ON 07/27/23
 # To use the Launcher, visit [ip here]/launcher or by clicking the link in the main page.
 from functools import partial
+import threading
 import time
 from nicegui import ui
 from ..core.launch import quickstart, LATEST_MINECRAFT_STABLE
@@ -28,21 +29,10 @@ try:
 except FileNotFoundError:
     print('[WARN] Config file not detected.')
 
-@ui.page('/')
-def launch():
-
-    def launch_mc(version):
-        footer.show()
-        launch_bt.visible = False
-        start2.disable()
-        ver_name = f'"{version}"'
-        #[[Inject the launch code here]]
-        version = ver_select.value
-        realversion = version_dict[version]
-        print("[INFO] Starting Minecraft", version)
-        #time.sleep(10)
+def mc_loop(realversion, footer, launch_bt, start2):
+    def real():
         process = quickstart(minecraft_version=realversion)
-        
+
         while True:
             #time.sleep(1)
             if process.poll() is not None:
@@ -56,6 +46,23 @@ def launch():
         footer.hide()
         launch_bt.visible = True
         start2.enable()
+    return real
+    
+@ui.page('/')
+def launch():
+
+    def launch_mc(version):
+        footer.show()
+        launch_bt.visible = False
+        start2.disable()
+        ver_name = f'"{version}"'
+        #[[Inject the launch code here]]
+        version = ver_select.value
+        realversion = version_dict[version]
+        print("[INFO] Starting Minecraft", version)
+        #time.sleep(10)
+        threading.Thread(target=mc_loop(realversion, footer, launch_bt, start2)).start()
+        
         
         
 
