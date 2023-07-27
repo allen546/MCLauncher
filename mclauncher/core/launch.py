@@ -9,3 +9,4 @@ def get_startup_options(authsession_or_username, resolution=None):
         opts.username = authsession_or_username
     else:
         opts.auth_session = authsession_or_username
+    
