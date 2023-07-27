@@ -76,11 +76,11 @@ def launch():
             ui.tab('选项')
 
     with ui.footer(value=False) as footer:
-        with ui.column():
+        with ui.column().style("width: 100%;"):
             ui.label('正在启动Minecraft').style('color: #FFFFFF; font-size: 200%; font-weight: 300')
             # To use the progressbar(which is developing) with no actural use:
-            # progressbar = ui.linear_progress(value=0).props('instant-feedback')
-            ui.label('请耐心等待...')
+            progressbar = ui.linear_progress(value=0).props('instant-feedback').style("width:100%;")
+            #ui.label('请耐心等待...')
     with ui.page_sticky(position='bottom-right', x_offset=20, y_offset=20):
         launch_bt = ui.button(on_click=launch_mc, icon='rocket').props('fab')
 
@@ -118,4 +118,3 @@ def launch():
                 switch5 = ui.switch('switch me')
                 switch6 = ui.switch('switch me')
             ui.label('启动选项').style('color: #6E93D6; font-size: 200%; font-weight: 300')
-ui.run(title='webUI')
