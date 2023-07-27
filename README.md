@@ -1,2 +1,2 @@
 # MCLauncher  
-Frontend powered by [LauncherNext](https://github.com/ccjjfdyqlhy/LauncherNext)
+[webUI module](https://github.com/allen546/MCLauncher/blob/main/mclauncher/webui/webui.py) supported by [LauncherNext](https://github.com/ccjjfdyqlhy/LauncherNext)  
