@@ -31,11 +31,11 @@ class Command():
         self.kwargs = dict(kwargs)
 
     def build(self):
-        cmd = [os.path.abspath(os.path.expanduser(cmd))]
+        cmd = [os.path.expanduser(self.exe)]
         for arg in self.args:
             cmd.append(arg)
 
-        for key, value in self.kwargs:
+        for key, value in self.kwargs.items():
             cmd.append(key)
             cmd.append(str(value))
 

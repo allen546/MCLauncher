@@ -1,4 +1,5 @@
 from nicegui import ui
+from ..core.launch import quickstart, LATEST_MINECRAFT_STABLE
 
 @ui.page("/")
 def index():
@@ -17,6 +18,7 @@ def index():
 
     with ui.tab_panels(tabs, value='启动').classes('w-full'):
         with ui.tab_panel('启动'):
+            ui.button("启动最新版"+str(LATEST_MINECRAFT_STABLE), on_click=quickstart)
             ui.label('LauncherNext').style('color: #6E93D6; font-size: 200%; font-weight: 300')
         with ui.tab_panel('下载'):
             ui.label('Content of B')

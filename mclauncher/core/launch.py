@@ -1,12 +1,12 @@
 import portablemc
+import subprocess
+from .command import *
+from .utils import *
 
+LATEST_MINECRAFT_STABLE = portablemc.VersionManifest().filter_latest("release")[0]
 
-
-def get_startup_options(authsession_or_username, resolution=None):
-    opts = portablemc.StartOptions()
-    opts.resolution = resolution if resolution else (1366,768)
-    if isinstance(authsession_or_username, str):
-        opts.username = authsession_or_username
-    else:
-        opts.auth_session = authsession_or_username
-    
+def quickstart(minecraft_version=LATEST_MINECRAFT_STABLE, username="steve"):
+    command = Command("portablemc", ["start", str(minecraft_version)], {"-u": username})
+    c = command.build()
+    p = subprocess.Popen(c)
+    return p
