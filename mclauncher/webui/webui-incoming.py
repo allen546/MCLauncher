@@ -1,6 +1,7 @@
 
 # EDIT ON 07/27/23
 # To use the Launcher, visit [ip here]/launcher or by clicking the link in the main page.
+from functools import partial
 import time
 from nicegui import ui
 from ..core.launch import quickstart, LATEST_MINECRAFT_STABLE
@@ -10,14 +11,19 @@ import os
 import subprocess
 import zipfile
 from nicegui import ui
+from ..core.versions import *
+import json
 
 cwd = os.getcwd()
 #os.system('mkdir lnxt')
 
 try:
-    with open(os.path.join(cwd, 'version.lnxt')) as verreadf:
-        verread = verreadf.read()
-        versions = verread.split('\n')
+    with open("versions.json", "r") as f:
+        versions = json.loads(f.read(), object_hook=VersionDecoder2)
+        f.seek(0)
+        version2 = json.loads(f.read(), object_hook=VersionDecoder)
+        version_dict = dict(zip(versions, version2))
+        #print(version_dict)
         print('[INFO] Config loaded.')
 except FileNotFoundError:
     print('[WARN] Config file not detected.')
@@ -30,10 +36,13 @@ def launch():
         launch_bt.visible = False
         start2.disable()
         ver_name = f'"{version}"'
-
         #[[Inject the launch code here]]
-        time.sleep(0.1)
-        process = quickstart()
+        version = ver_select.value
+        realversion = version_dict[version]
+        print("[INFO] Starting Minecraft", version)
+        #time.sleep(10)
+        """
+        process = quickstart(minecraft_version=realversion)
         
         while True:
             #time.sleep(1)
@@ -41,10 +50,15 @@ def launch():
                 break
             ln = process.stdout.readline()
             print(ln.decode(), end="")
+            if ln.decode().strip().endswith("Stopping!"):
+                break
         print(process.stdout.read().decode())
+        """
         footer.hide()
         launch_bt.visible = True
         start2.enable()
+        
+        
 
     with ui.header().classes(replace='row items-center') as header:
         ui.button(icon='style').props('flat color=white')
@@ -61,7 +75,6 @@ def launch():
             # To use the progressbar(which is developing) with no actural use:
             # progressbar = ui.linear_progress(value=0).props('instant-feedback')
             ui.label('请耐心等待...')
-
     with ui.page_sticky(position='bottom-right', x_offset=20, y_offset=20):
         launch_bt = ui.button(on_click=launch_mc, icon='rocket').props('fab')
 
@@ -72,7 +85,7 @@ def launch():
             ui.separator()
             with ui.column():
                 ver_select = ui.select(versions, value=str(versions[0]))
-                start2 = ui.button("启动MC"+str(LATEST_MINECRAFT_STABLE), on_click=launch_mc)
+                start2 = ui.button("启动Minecraft", on_click=launch_mc)
                 #ui.button('管理登录', on_click=login).tooltip('管理Littleskin登录通行证')
                 checkbox = ui.checkbox('使用离线登录')
                 #chk_var = ui.checkbox('补全文件 (会拖慢启动速度，但能解决大部分问题)')
