@@ -1,3 +1,4 @@
+import tempfile
 import portablemc
 import subprocess
 from .command import *
@@ -17,5 +18,5 @@ def quickstart(minecraft_version=LATEST_MINECRAFT_STABLE, username="steve", JVM=
     else:
         command = Command("portablemc", ["start", str(minecraft_version)], {"-u": username})
     c = command.build()
-    p = subprocess.Popen(c)
+    p = subprocess.Popen(c, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     return p
