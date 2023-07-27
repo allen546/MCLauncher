@@ -41,7 +41,6 @@ def launch():
         realversion = version_dict[version]
         print("[INFO] Starting Minecraft", version)
         #time.sleep(10)
-        """
         process = quickstart(minecraft_version=realversion)
         
         while True:
@@ -53,7 +52,7 @@ def launch():
             if ln.decode().strip().endswith("Stopping!"):
                 break
         print(process.stdout.read().decode())
-        """
+        
         footer.hide()
         launch_bt.visible = True
         start2.enable()
