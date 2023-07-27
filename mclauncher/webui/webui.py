@@ -89,12 +89,13 @@ def launch():
             ui.label('启动面板').style('color: #6E93D6; font-size: 200%; font-weight: 300')
             
             ui.separator()
-            with ui.column():
-                ver_select = ui.select(versions, value=str(versions[0]))
-                start2 = ui.button("启动Minecraft", on_click=launch_mc)
-                #ui.button('管理登录', on_click=login).tooltip('管理Littleskin登录通行证')
-                checkbox = ui.checkbox('使用离线登录')
-                #chk_var = ui.checkbox('补全文件 (会拖慢启动速度，但能解决大部分问题)')
+            with ui.card():
+                with ui.column():
+                    ver_select = ui.select(versions, value=str(versions[0]))
+                    start2 = ui.button("启动Minecraft", on_click=launch_mc)
+                    #ui.button('管理登录', on_click=login).tooltip('管理Littleskin登录通行证')
+                    checkbox = ui.checkbox('使用离线登录')
+                    #chk_var = ui.checkbox('补全文件 (会拖慢启动速度，但能解决大部分问题)')
 
         with ui.tab_panel('下载'):
             ui.label('Content of B')
