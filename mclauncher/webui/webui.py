@@ -4,6 +4,8 @@
 from functools import partial
 import threading
 import time
+import psutil
+import datetime
 import os
 import subprocess
 import zipfile
@@ -12,6 +14,7 @@ from nicegui import ui
 from ..core.launch import quickstart, LATEST_MINECRAFT_STABLE
 from ..core.versions import VersionDecoder, VersionDecoder2
 from ..core.utils import *
+from ..core.daemon import MCDaemon
 
 cwd = os.getcwd()
 __version__ = '0.2' 
@@ -29,7 +32,6 @@ try:
 except FileNotFoundError:
     print('[WARN] Config file not detected.')
 
-
 def mc_loop(realversion, footer, launch_bt, start2, logs):
     def real():
         process = quickstart(minecraft_version=realversion)
@@ -42,6 +44,9 @@ def mc_loop(realversion, footer, launch_bt, start2, logs):
             logs.push(ln.decode().strip())
             if ln.decode().strip().endswith("Stopping!"):
                 break
+            #if MCDaemon.detect(1) == 1:
+                #break
+            #This can be change in the future
         n = process.stdout.read().decode()
         print(n)
         logs.push(n)
@@ -49,10 +54,9 @@ def mc_loop(realversion, footer, launch_bt, start2, logs):
         logs.clear()
         launch_bt.visible = True
         start2.enable()
-
     return real
 
-
+#Launcher webUI design
 @ui.page('/')
 def launch():
     def launch_mc(version_getter):
@@ -115,10 +119,10 @@ def launch():
             ui.tab('选项')
 
     with ui.footer(value=False).style("height:20%") as footer:
-        ui.label('正在启动Minecraft').style('color: #FFFFFF; font-size: 200%; font-weight: 300')
+        ui.label('实时Logs')
         with ui.column().style("width: 100%; height: 100%"):
             # To use the progressbar(which is developing) with no actual use:
-            logs = ui.log().style("width: 100%; height: 70%;background-color: #000000; text-color: #FFFFFF")
+            logs = ui.log().style("width: 100%; height: 80%;background-color: #000000; text-color: #FFFFFF")
             #progressbar = ui.linear_progress(value=0).props('instant-feedback').style("width:100%;")
 
     with ui.page_sticky(position='bottom-right', x_offset=20, y_offset=20):
@@ -131,8 +135,8 @@ def launch():
             ui.label('\u00a0')  # Added some spaces through the interface
             ui.separator()
             ui.label('\u00a0')
-            with ui.row().style("width: 99%;"):
-                with ui.card().style("width: 49%; height: 100%"):
+            with ui.row():
+                with ui.card():
                     with ui.column():
                         ui.label('简易启动')
                         ver_select2 = ui.select(versions, value=str(versions[0]))
@@ -141,7 +145,7 @@ def launch():
                         checkbox = ui.checkbox('使用离线登录(用户名为Steve)')
                         # chk_var = ui.checkbox('补全文件 (会拖慢启动速度，但能解决大部分问题)')
                 ui.label('\u00a0')
-                with ui.card().style("width: 49%; height: 100%"):
+                with ui.card():
                     with ui.column():
                         ui.label('自定义启动')
                         ver_select = ui.select(versions, value=str(versions[0]))
@@ -188,6 +192,10 @@ def launch():
                     'color: #6E93D6; font-size: 200%; font-weight: 300'
                 )
                 with ui.column():
+                    ui.label('Daemon侦测循环频率(单位:s)(目前没用)')
+                    with ui.row():
+                        slider = ui.slider(min=0, max=5, value=1)
+                        ui.label().bind_text_from(slider, 'value')
                     switch1 = ui.switch('1')
                     switch2 = ui.switch('2')
                     switch3 = ui.switch('3')
