@@ -135,25 +135,44 @@ def launch():
             ui.label('\u00a0')  # Added some spaces through the interface
             ui.separator()
             ui.label('\u00a0')
-            with ui.row():
-                with ui.card():
-                    with ui.column():
-                        ui.label('简易启动')
-                        ver_select2 = ui.select(versions, value=str(versions[0]))
-                        start1 = ui.button("启动Minecraft", on_click=get_launch_mc(ver_select2))
-                        # ui.button('管理登录', on_click=login).tooltip('管理Littleskin登录通行证')
-                        checkbox = ui.checkbox('使用离线登录(用户名为Steve)')
-                        # chk_var = ui.checkbox('补全文件 (会拖慢启动速度，但能解决大部分问题)')
+            with ui.column():
+                with ui.row():
+                    with ui.card():
+                        with ui.column():
+                            ui.label('简易启动')
+                            ver_select2 = ui.select(versions, value=str(versions[0]))
+                            start1 = ui.button("启动Minecraft", on_click=get_launch_mc(ver_select2))
+                            # ui.button('管理登录', on_click=login).tooltip('管理Littleskin登录通行证')
+                            #checkbox = ui.checkbox('使用离线登录(用户名为Steve)')
+                            # chk_var = ui.checkbox('补全文件 (会拖慢启动速度，但能解决大部分问题)')
+                    ui.label('\u00a0')
+                    with ui.card():
+                        with ui.column():
+                            ui.label('自定义启动')
+                            ver_select = ui.select(versions, value=str(versions[0]))
+                            start2 = ui.button("启动Minecraft", on_click=get_launch_mc(ver_select))
+                            # ui.button('管理登录', on_click=login).tooltip('管理Littleskin登录通行证')
+                            #checkbox = ui.checkbox('使用离线登录(用户名为Steve)')
+                            # chk_var = ui.checkbox('补全文件 (会拖慢启动速度，但能解决大部分问题)')
                 ui.label('\u00a0')
                 with ui.card():
-                    with ui.column():
-                        ui.label('自定义启动')
-                        ver_select = ui.select(versions, value=str(versions[0]))
-                        start2 = ui.button("启动Minecraft", on_click=get_launch_mc(ver_select))
-                        # ui.button('管理登录', on_click=login).tooltip('管理Littleskin登录通行证')
-                        checkbox = ui.checkbox('使用离线登录(用户名为Steve)')
-                        # chk_var = ui.checkbox('补全文件 (会拖慢启动速度，但能解决大部分问题)')
-
+                    with ui.row():
+                        with ui.card():
+                            with ui.column():
+                                checkms = ui.checkbox('启用Microsoft账户登录')
+                            ui.label('启动器将在你下次启动MC时要求授权你的Microsoft账户。').bind_visibility_from(checkms, 'value')
+                        with ui.card():
+                            with ui.column():
+                                checkemail = ui.checkbox('启用Littleskin登录')
+                                ui.label('免费的Authlib注入登录方式').bind_visibility_from(checkemail, 'value')
+                                ui.input('email或用户名').bind_visibility_from(checkemail, 'value')
+                                ui.input('密码',password=True,password_toggle_button=True).bind_visibility_from(checkemail, 'value')
+                                ui.button('保存/刷新 登录Token').bind_visibility_from(checkemail, 'value')
+                                ui.link('注册Littleskin账户','https://littleskin.cn/auth/register').bind_visibility_from(checkemail, 'value')
+                                ui.link('浏览皮肤库','https://littleskin.cn/skinlib').bind_visibility_from(checkemail, 'value')
+                    ui.label('Tip: 若你没有选定任意一个登录选项，启动器将自动以离线模式启动Minecraft。')
+                    ui.link('购买正版账户','https://www.xbox.com/zh-cn/games/store/minecraft-java-bedrock-edition-for-pc/9nxp44l49shj')
+                    ui.link('还在用Mojang账户?点此迁移到Microsoft账户','https://www.minecraft.net/zh-hans/account-security')
         with ui.tab_panel('版本'):
             ui.label("Version")
 
