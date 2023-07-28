@@ -29,7 +29,7 @@ except FileNotFoundError:
     print('[WARN] Config file not detected.')
 
 
-def mc_loop(realversion, footer, launch_bt, start2):
+def mc_loop(realversion, footer, launch_bt, start2, logs):
     def real():
         process = quickstart(minecraft_version=realversion)
         while True:
@@ -38,10 +38,14 @@ def mc_loop(realversion, footer, launch_bt, start2):
                 break
             ln = process.stdout.readline()
             print(ln.decode(), end="")
+            logs.push(ln.decode().strip())
             if ln.decode().strip().endswith("Stopping!"):
                 break
-        print(process.stdout.read().decode())
+        n = process.stdout.read().decode()
+        print(n)
+        logs.push(n)
         footer.hide()
+        logs.clear()
         launch_bt.visible = True
         start2.enable()
 
@@ -53,20 +57,21 @@ def launch():
     def launch_mc(version):
         footer.show()
         launch_bt.visible = False
-        start1.disable()
+        #start1.disable()
         start2.disable()
         # ver_name = f'"{version}"'
 
         version = ver_select.value
         realversion = version_dict[version]
         print("[INFO] Starting Minecraft", version)
+        logs.push("[INFO] Starting Minecraft "+version)
         # time.sleep(10)
-        threading.Thread(target=mc_loop(realversion, footer, launch_bt, start2)).start()
+        threading.Thread(target=mc_loop(realversion, footer, launch_bt, start2, logs)).start()
 
     def launch_mc_now(version):
         footer.show()
         launch_bt.visible = False
-        start1.disable()
+        #start1.disable()
         start2.disable()
         # ver_name = f'"{version}"'
 
@@ -74,7 +79,7 @@ def launch():
         realversion = version_dict[version]
         print("[INFO] Starting Minecraft", version)
         # time.sleep(10)
-        threading.Thread(target=mc_loop(realversion, footer, launch_bt, start2)).start()
+        threading.Thread(target=mc_loop(realversion, footer, launch_bt, start2, logs)).start()
 
     with ui.dialog() as dialog, ui.card():
         with ui.column():
@@ -96,41 +101,45 @@ def launch():
             ui.tab('Mod管理')
             ui.tab('选项')
 
-    with ui.footer(value=False) as footer:
-        with ui.column().style("width: 100%;"):
-            ui.label('正在启动Minecraft').style('color: #FFFFFF; font-size: 200%; font-weight: 300')
+    with ui.footer(value=False).style("height:20%") as footer:
+        ui.label('正在启动Minecraft').style('color: #FFFFFF; font-size: 200%; font-weight: 300')
+        with ui.column().style("width: 100%; height: 100%"):
             # To use the progressbar(which is developing) with no actual use:
-            progressbar = ui.linear_progress(value=0).props('instant-feedback').style("width:100%;")
+            logs = ui.log().style("width: 100%; height: 70%;background-color: #000000; text-color: #FFFFFF")
+            #progressbar = ui.linear_progress(value=0).props('instant-feedback').style("width:100%;")
 
     with ui.page_sticky(position='bottom-right', x_offset=20, y_offset=20):
         launch_bt = ui.button(on_click=launch_mc_now, icon='rocket').props('fab')
+        
 
     with ui.tab_panels(tabs, value='启动').classes('w-full'):
         with ui.tab_panel('启动'):
             ui.label('启动面板').style('color: #6E93D6; font-size: 200%; font-weight: 300')
             ui.label('\u00a0')  # Added some spaces through the interface
             ui.separator()
-            with ui.card():
-                with ui.column():
-                    ui.label('智能启动')
-                    ui.label(
-                        '智能启动将使用你上次启动使用的配置，高速启动实例(第一次可能会超级慢)'
-                    )
-                    ui.label(
-                        'Tip:你也可以通过单击启动器左上角按钮智能启动Minecraft。'
-                    )
-                    start1 = ui.button(
-                        "立即启动" + str(versions[0]), on_click=launch_mc_now
-                    )
             ui.label('\u00a0')
-            with ui.card():
-                with ui.column():
-                    ui.label('自定义启动')
-                    ver_select = ui.select(versions, value=str(versions[0]))
-                    start2 = ui.button("启动Minecraft", on_click=launch_mc)
-                    # ui.button('管理登录', on_click=login).tooltip('管理Littleskin登录通行证')
-                    checkbox = ui.checkbox('使用离线登录(用户名为Steve)')
-                    # chk_var = ui.checkbox('补全文件 (会拖慢启动速度，但能解决大部分问题)')
+            with ui.row().style("width: 99%;"):
+                with ui.card().style("width: 49%; height: 100%"):
+                    with ui.column():
+                        ui.label('简易启动')
+                        ver_select = ui.select(versions, value=str(versions[0]))
+                        start2 = ui.button("启动Minecraft", on_click=launch_mc)
+                        # ui.button('管理登录', on_click=login).tooltip('管理Littleskin登录通行证')
+                        checkbox = ui.checkbox('使用离线登录(用户名为Steve)')
+                        # chk_var = ui.checkbox('补全文件 (会拖慢启动速度，但能解决大部分问题)')
+                ui.label('\u00a0')
+                with ui.card().style("width: 49%; height: 100%"):
+                    with ui.column():
+                        ui.label('自定义启动')
+                        ver_select = ui.select(versions, value=str(versions[0]))
+                        start2 = ui.button("启动Minecraft", on_click=launch_mc)
+                        # ui.button('管理登录', on_click=login).tooltip('管理Littleskin登录通行证')
+                        checkbox = ui.checkbox('使用离线登录(用户名为Steve)')
+                        # chk_var = ui.checkbox('补全文件 (会拖慢启动速度，但能解决大部分问题)')
+
+        with ui.tab_panel('版本'):
+            ui.label("Version")
+
 
         with ui.tab_panel('下载'):
             ui.label('Content of B')
