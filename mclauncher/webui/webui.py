@@ -13,7 +13,7 @@ from ..core.launch import quickstart, LATEST_MINECRAFT_STABLE
 from ..core.versions import VersionDecoder, VersionDecoder2
 
 cwd = os.getcwd()
-ver = '0.2'
+__version__ = '0.2' 
 
 # os.system('mkdir lnxt')
 
@@ -81,13 +81,13 @@ def launch():
             ui.label('关于 LauncherNext').style(
                 'color: #6E93D6; font-size: 200%; font-weight: 300'
             )
-            ui.label('LauncherNext v' + ver)
+            ui.label('LauncherNext v' + __version__)
             ui.label('一个由Allen546和DarkstarXD共同开发的webUI轻量级Minecraft启动器。')
             ui.button('关闭', on_click=dialog.close)
 
     with ui.header().classes(replace='row items-center') as header:
         ui.button(icon='launch', on_click=dialog.open).props('flat color=white').tooltip(
-            'LauncherNext v' + ver
+            'LauncherNext v' + __version__
         )
         with ui.tabs() as tabs:
             ui.tab('启动')
