@@ -30,3 +30,11 @@ class ButtonGroup():
 
     def add_button(self, btn):
         self.buttons.append(btn)
+
+    def disable(self):
+        for btn in self.buttons:
+            btn.disable()
+
+    def enable(self):
+        for btn in self.buttons:
+            btn.enable()

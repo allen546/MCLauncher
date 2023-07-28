@@ -11,6 +11,7 @@ import json
 from nicegui import ui
 from ..core.launch import quickstart, LATEST_MINECRAFT_STABLE
 from ..core.versions import VersionDecoder, VersionDecoder2
+from ..core.utils import *
 
 cwd = os.getcwd()
 __version__ = '0.2' 
@@ -54,32 +55,44 @@ def mc_loop(realversion, footer, launch_bt, start2, logs):
 
 @ui.page('/')
 def launch():
-    def launch_mc(version):
+    def launch_mc(version_getter):
         footer.show()
         launch_bt.visible = False
-        #start1.disable()
-        start2.disable()
+        start = ButtonGroup()
+        start.add_button(start2)
+        start.add_button(start1)
+        start.disable()
         # ver_name = f'"{version}"'
 
-        version = ver_select.value
+        #version = ver_select.value
+        version = version_getter()
         realversion = version_dict[version]
         print("[INFO] Starting Minecraft", version)
         logs.push("[INFO] Starting Minecraft "+version)
         # time.sleep(10)
-        threading.Thread(target=mc_loop(realversion, footer, launch_bt, start2, logs)).start()
+        threading.Thread(target=mc_loop(realversion, footer, launch_bt, start, logs)).start()
 
-    def launch_mc_now(version):
+    def launch_mc_now():
         footer.show()
         launch_bt.visible = False
-        #start1.disable()
-        start2.disable()
+        start = ButtonGroup()
+        start.add_button(start2)
+        start.add_button(start1)
+        start.disable()
         # ver_name = f'"{version}"'
 
         version = ver_select.value
         realversion = version_dict[version]
         print("[INFO] Starting Minecraft", version)
         # time.sleep(10)
-        threading.Thread(target=mc_loop(realversion, footer, launch_bt, start2, logs)).start()
+        threading.Thread(target=mc_loop(realversion, footer, launch_bt, start, logs)).start()
+
+    def get_launch_mc(bind_to):
+        def getter():
+            return bind_to.value
+        def callback():
+            return launch_mc(getter)
+        return callback
 
     with ui.dialog() as dialog, ui.card():
         with ui.column():
@@ -122,8 +135,8 @@ def launch():
                 with ui.card().style("width: 49%; height: 100%"):
                     with ui.column():
                         ui.label('简易启动')
-                        ver_select = ui.select(versions, value=str(versions[0]))
-                        start2 = ui.button("启动Minecraft", on_click=launch_mc)
+                        ver_select2 = ui.select(versions, value=str(versions[0]))
+                        start1 = ui.button("启动Minecraft", on_click=get_launch_mc(ver_select2))
                         # ui.button('管理登录', on_click=login).tooltip('管理Littleskin登录通行证')
                         checkbox = ui.checkbox('使用离线登录(用户名为Steve)')
                         # chk_var = ui.checkbox('补全文件 (会拖慢启动速度，但能解决大部分问题)')
@@ -132,7 +145,7 @@ def launch():
                     with ui.column():
                         ui.label('自定义启动')
                         ver_select = ui.select(versions, value=str(versions[0]))
-                        start2 = ui.button("启动Minecraft", on_click=launch_mc)
+                        start2 = ui.button("启动Minecraft", on_click=get_launch_mc(ver_select))
                         # ui.button('管理登录', on_click=login).tooltip('管理Littleskin登录通行证')
                         checkbox = ui.checkbox('使用离线登录(用户名为Steve)')
                         # chk_var = ui.checkbox('补全文件 (会拖慢启动速度，但能解决大部分问题)')

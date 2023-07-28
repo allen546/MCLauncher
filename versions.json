@@ -13,5 +13,10 @@
         "__type__": "MinecraftVersion", 
         "version": "22w46a", 
         "type": "snapshot"
+    },
+    {
+        "__type__": "MinecraftVersion", 
+        "version": "1.16.5", 
+        "type": "release"
     }
 ]
