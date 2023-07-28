@@ -1,5 +1,5 @@
 
-# EDIT ON 07/28/23
+# EDIT ON 07/29/23
 
 from functools import partial
 import threading
@@ -98,6 +98,18 @@ def launch():
             return launch_mc(getter)
         return callback
 
+    def end_forcely():
+        #make a auto-select system soon
+        os.system('taskkill /f /im java.exe')
+        os.system('kill java')
+        footer.hide()
+        logs.clear()
+        launch_bt.visible = True
+        start2.enable()
+    
+    def connect():
+        print('[WARN] NOT COMPLETED')
+
     with ui.dialog() as dialog, ui.card():
         with ui.column():
             ui.label('关于 LauncherNext').style(
@@ -118,11 +130,17 @@ def launch():
             ui.tab('Mod管理')
             ui.tab('选项')
 
-    with ui.footer(value=False).style("height:20%") as footer:
-        ui.label('实时Logs')
+    with ui.footer(value=False).style("height:40%") as footer:
+        with ui.row():
+            ui.spinner('audio',size='lg', color='white')
+            ui.label('Minecraft 运行中').style('color:#FFFFFF; font-size: 200%; font-weight: 300')
+            ui.label('\u00a0')
+            ui.button('强行终止进程',on_click=end_forcely).style('font-color:#FFFFFF')
+            ui.label('\u00a0')
+            ui.button('启动联机',on_click=connect).style('font-color:#FFFFFF')
         with ui.column().style("width: 100%; height: 100%"):
             # To use the progressbar(which is developing) with no actual use:
-            logs = ui.log().style("width: 100%; height: 80%;background-color: #000000; text-color: #FFFFFF")
+            logs = ui.log().style("width: 100%; height: 80%")
             #progressbar = ui.linear_progress(value=0).props('instant-feedback').style("width:100%;")
 
     with ui.page_sticky(position='bottom-right', x_offset=20, y_offset=20):
@@ -174,8 +192,19 @@ def launch():
                     ui.link('购买正版账户','https://www.xbox.com/zh-cn/games/store/minecraft-java-bedrock-edition-for-pc/9nxp44l49shj')
                     ui.link('还在用Mojang账户?点此迁移到Microsoft账户','https://www.minecraft.net/zh-hans/account-security')
         with ui.tab_panel('版本'):
-            ui.label("Version")
+            ui.label('版本管理').style('color: #6E93D6; font-size: 200%; font-weight: 300')
+            ui.label('\u00a0')  # Added some spaces through the interface
+            ui.separator()
+            ui.label('\u00a0')
+            columns = [
+    {'name': 'name', 'label': '版本名称', 'field': 'name', 'required': True, 'align': 'left'},
+    {'name': 'type', 'label': '类型', 'field': 'class', 'required': True, 'sortable': True},
+    #{'name': 'operation', 'label': '操作', 'field': 'operation', 'required': True, 'sortable': False},
+]
+            rows = [{'name': version.split()[1], 'class': version.split()[0]} for version in versions]
 
+            with ui.column():
+                ui.table(columns=columns, rows=rows, row_key='name')
 
         with ui.tab_panel('下载'):
             ui.label('Content of B')
