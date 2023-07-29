@@ -84,7 +84,7 @@ def launch():
 
     def launch_mc(version_getter):
         footer.show()
-        launch_bt.visible = False
+        #launch_bt.visible = False
         start = ButtonGroup()
         start.add_button(start2)
         start.add_button(start1)
@@ -109,11 +109,11 @@ def launch():
         print("[INFO] Starting Minecraft ", version)
         logs.push("[LauncherNext] [INFO] Starting Minecraft "+version)
         # time.sleep(10)
-        threading.Thread(target=mc_loop(realversion, footer, launch_bt, start, logs, endbt,closebt,display,username,mslogin)).start()
+        threading.Thread(target=mc_loop(realversion, footer, start, logs, endbt,closebt,display,username,mslogin)).start()
 
     def launch_mc_now():
         footer.show()
-        launch_bt.visible = False
+        #launch_bt.visible = False
         start = ButtonGroup()
         start.add_button(start2)
         start.add_button(start1)
@@ -136,7 +136,7 @@ def launch():
         print("[INFO] Starting Minecraft ", version)
         logs.push("[LauncherNext] [INFO] Starting Minecraft "+version)
         # time.sleep(10)
-        threading.Thread(target=mc_loop(realversion, footer, launch_bt, start, logs, endbt,closebt,display,username,mslogin)).start()
+        threading.Thread(target=mc_loop(realversion, footer, start, logs, endbt,closebt,display,username,mslogin)).start()
 
     def get_launch_mc(bind_to):
         def getter():
@@ -162,7 +162,7 @@ def launch():
     def close_footer():
         footer.hide()
         logs.clear()
-        launch_bt.visible = True
+        #launch_bt.visible = True
         start2.enable() # FIXED: only enables one button, the other is still disabled
         start1.enable()
 
