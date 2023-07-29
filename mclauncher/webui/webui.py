@@ -15,7 +15,7 @@ from ..core.utils import *
 from ..core.versions import VersionDecoder, VersionDecoder2
 
 cwd = os.getcwd()
-__version__ = '0.2' 
+__version__ = '0.3' 
 dt = datetime.now()
 
 #temporary dummy addable version list
