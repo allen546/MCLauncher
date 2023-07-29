@@ -31,9 +31,9 @@ except FileNotFoundError:
     print('[WARN] Config file not detected.')
 
 #Game tracking loop
-def mc_loop(realversion, footer, launch_bt, start2, logs, endbt,closebt,display,username,mslogin):
+def mc_loop(realversion, footer, start2, logs, endbt,closebt,display,username,mslogin,msarg):
     def real():
-        process = quickstart(minecraft_version=realversion,username=username,mslogin=mslogin)
+        process = quickstart(minecraft_version=realversion,username=username,mslogin=mslogin,msarg=msarg)
         endbt.enable()
         closebt.disable()
         display.on_text_change('Minecraft运行中')
@@ -84,7 +84,7 @@ def launch():
 
     def launch_mc(version_getter):
         footer.show()
-        launch_bt.visible = False
+        #launch_bt.visible = False
         start = ButtonGroup()
         start.add_button(start2)
         start.add_button(start1)
@@ -100,20 +100,22 @@ def launch():
         logs.push("[LauncherNext] [INFO] Setting Offline User: "+username)
         if checkms.value == True:
             mslogin=emailin.value
+            msarg='-m'
             print("[INFO] Using Microsoft Account ", mslogin)
             logs.push("[LauncherNext] [INFO] Using Microsoft Account "+mslogin)
         else:
             mslogin=''
+            msarg=''
         version = version_getter()
         realversion = version_dict[version]
         print("[INFO] Starting Minecraft ", version)
         logs.push("[LauncherNext] [INFO] Starting Minecraft "+version)
         # time.sleep(10)
-        threading.Thread(target=mc_loop(realversion, footer, launch_bt, start, logs, endbt,closebt,display,username,mslogin)).start()
+        threading.Thread(target=mc_loop(realversion, footer, start, logs, endbt,closebt,display,username,mslogin,msarg)).start()
 
     def launch_mc_now():
         footer.show()
-        launch_bt.visible = False
+        #launch_bt.visible = False
         start = ButtonGroup()
         start.add_button(start2)
         start.add_button(start1)
@@ -127,16 +129,18 @@ def launch():
         logs.push("[LauncherNext] [INFO] Setting Offline User: "+username)
         if checkms.value == True:
             mslogin=emailin.value
+            msarg='-m'
             print("[INFO] Using Microsoft Account ", mslogin)
             logs.push("[LauncherNext] [INFO] Using Microsoft Account "+mslogin)
         else:
             mslogin=''
+            msarg=''
         version = ver_select.value
         realversion = version_dict[version]
         print("[INFO] Starting Minecraft ", version)
         logs.push("[LauncherNext] [INFO] Starting Minecraft "+version)
         # time.sleep(10)
-        threading.Thread(target=mc_loop(realversion, footer, launch_bt, start, logs, endbt,closebt,display,username,mslogin)).start()
+        threading.Thread(target=mc_loop(realversion, footer, start, logs, endbt,closebt,display,username,mslogin,msarg)).start()
 
     def get_launch_mc(bind_to):
         def getter():
@@ -162,7 +166,7 @@ def launch():
     def close_footer():
         footer.hide()
         logs.clear()
-        launch_bt.visible = True
+        #launch_bt.visible = True
         start2.enable() # FIXED: only enables one button, the other is still disabled
         start1.enable()
 
@@ -199,8 +203,8 @@ def launch():
             logs = ui.log().style("width: 100%; height: 80%")
             #progressbar = ui.linear_progress(value=0).props('instant-feedback').style("width:100%;")
 
-    with ui.page_sticky(position='bottom-right', x_offset=20, y_offset=20):
-        launch_bt = ui.button(on_click=launch_mc_now, icon='rocket').props('fab')
+    #with ui.page_sticky(position='bottom-right', x_offset=20, y_offset=20):
+        #launch_bt = ui.button(on_click=launch_mc_now, icon='rocket').props('fab')
         
 
     with ui.tab_panels(tabs, value='启动').classes('w-full'):
