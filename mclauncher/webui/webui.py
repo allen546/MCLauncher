@@ -101,14 +101,11 @@ def launch():
     def end_forcely():
         #make a auto-select system soon
         os.system('taskkill /f /im java.exe')
-        os.system('kill java')
+        os.system('kill java') #bug2: this doesnt work
         footer.hide()
         logs.clear()
         launch_bt.visible = True
-        start2.enable()
-    
-    def connect():
-        print('[WARN] NOT COMPLETED')
+        start2.enable() # Bug: only enables one button, the other is still disabled
 
     with ui.dialog() as dialog, ui.card():
         with ui.column():
@@ -136,8 +133,7 @@ def launch():
             ui.label('Minecraft 运行中').style('color:#FFFFFF; font-size: 200%; font-weight: 300')
             ui.label('\u00a0')
             ui.button('强行终止进程',on_click=end_forcely).style('font-color:#FFFFFF')
-            ui.label('\u00a0')
-            ui.button('启动联机',on_click=connect).style('font-color:#FFFFFF')
+            
         with ui.column().style("width: 100%; height: 100%"):
             # To use the progressbar(which is developing) with no actual use:
             logs = ui.log().style("width: 100%; height: 80%")
