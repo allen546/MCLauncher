@@ -4,3 +4,4 @@ portablemc==3.3.1
 requests==2.25.1
 install-jdk
 psutil
+certifi

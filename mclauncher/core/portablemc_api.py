@@ -1,5 +1,6 @@
 import os
 from portablemc import *
+from .jvm import *
 
 CACHED_VERSION_MANIFEST = os.path.join(get_minecraft_dir(), "version_manifest.json")
 
