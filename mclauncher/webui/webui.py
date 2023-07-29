@@ -176,9 +176,7 @@ def launch():
             ui.button('关闭', on_click=dialog.close)
 
     with ui.header().classes(replace='row items-center') as header:
-        ui.button(icon='launch', on_click=dialog.open).props('flat color=white').tooltip(
-            'LauncherNext v' + __version__
-        )
+        ui.button(icon='launch', on_click=dialog.open).props('flat color=white').tooltip('LauncherNext')
         with ui.tabs() as tabs:
             ui.tab('启动')
             ui.tab('版本')
@@ -199,8 +197,9 @@ def launch():
             logs = ui.log().style("width: 100%; height: 80%")
             #progressbar = ui.linear_progress(value=0).props('instant-feedback').style("width:100%;")
 
-    with ui.page_sticky(position='bottom-right', x_offset=20, y_offset=20):
-        launch_bt = ui.button(on_click=launch_mc_now, icon='rocket').props('fab')
+    #Removed sticky button
+    #with ui.page_sticky(position='bottom-right', x_offset=20, y_offset=20):
+        #launch_bt = ui.button(on_click=launch_mc_now, icon='rocket').props('fab')
         
 
     with ui.tab_panels(tabs, value='启动').classes('w-full'):
