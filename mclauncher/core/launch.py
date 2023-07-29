@@ -19,11 +19,11 @@ else:
     else:
         JVM_SHOULD_BE = None
 
-def quickstart(minecraft_version=LATEST_MINECRAFT_STABLE, username="steve", JVM=JVM_SHOULD_BE):
+def quickstart(minecraft_version=LATEST_MINECRAFT_STABLE, JVM=JVM_SHOULD_BE,username='steve',mslogin='',msarg='-m'):
     if JVM:
-        command = Command("portablemc", ["start", str(minecraft_version), "--jvm="+JVM], {"-u": username})
+        command = Command("portablemc", ["start", str(minecraft_version), "--jvm="+JVM], {"-u": username, "-m": msarg, "-l": mslogin})
     else:
-        command = Command("portablemc", ["start", str(minecraft_version)], {"-u": username})
+        command = Command("portablemc", ["start", str(minecraft_version)], {"-u": username, "-m": msarg, "-l": mslogin})
     c = command.build()
     p = subprocess.Popen(c, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     return p
