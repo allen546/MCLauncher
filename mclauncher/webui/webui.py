@@ -103,6 +103,7 @@ def launch():
             os.system('taskkill /f /im java.exe')
         else:
             os.system('killall -9 java')
+        print("[ INFO ] Killed Java")
         footer.hide()
         logs.clear()
         launch_bt.visible = True
