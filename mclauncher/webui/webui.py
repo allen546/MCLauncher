@@ -99,9 +99,10 @@ def launch():
         return callback
 
     def end_forcely():
-        #make a auto-select system soon
-        os.system('taskkill /f /im java.exe')
-        os.system('kill java') #bug2: this doesnt work
+        if os.name == "nt":
+            os.system('taskkill /f /im java.exe')
+        else:
+            os.system('killall -9 java')
         footer.hide()
         logs.clear()
         launch_bt.visible = True
