@@ -249,6 +249,7 @@ def launch():
                                 usrinput=ui.input('玩家代号').bind_visibility_from(checkoffline, 'value')
                                 ui.label('使用该方法登录时，部分Minecraft功能将无法使用。').bind_visibility_from(checkoffline, 'value')
                     ui.label('Tip: 若你没有选定任意一个登录选项，启动器将自动以玩家代号为Steve离线启动Minecraft。')
+                    ui.label('如果你选择了多个登录方式，启动器将依次使用Microsoft账户-Littleskin账户-离线登录的顺序尝试登录Minecraft。')                    
                     ui.link('购买正版账户','https://www.xbox.com/zh-cn/games/store/minecraft-java-bedrock-edition-for-pc/9nxp44l49shj')
                     ui.link('还在用Mojang账户?点此迁移到Microsoft账户','https://www.minecraft.net/zh-hans/account-security')
         with ui.tab_panel('版本'):
