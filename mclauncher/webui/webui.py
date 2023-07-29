@@ -84,7 +84,7 @@ def launch():
 
     def launch_mc(version_getter):
         footer.show()
-        #launch_bt.visible = False
+        launch_bt.visible = False
         start = ButtonGroup()
         start.add_button(start2)
         start.add_button(start1)
@@ -109,11 +109,11 @@ def launch():
         print("[INFO] Starting Minecraft ", version)
         logs.push("[LauncherNext] [INFO] Starting Minecraft "+version)
         # time.sleep(10)
-        threading.Thread(target=mc_loop(realversion, footer, start, logs, endbt,closebt,display,username,mslogin)).start()
+        threading.Thread(target=mc_loop(realversion, footer, launch_bt, start, logs, endbt,closebt,display,username,mslogin)).start()
 
     def launch_mc_now():
         footer.show()
-        #launch_bt.visible = False
+        launch_bt.visible = False
         start = ButtonGroup()
         start.add_button(start2)
         start.add_button(start1)
@@ -136,7 +136,7 @@ def launch():
         print("[INFO] Starting Minecraft ", version)
         logs.push("[LauncherNext] [INFO] Starting Minecraft "+version)
         # time.sleep(10)
-        threading.Thread(target=mc_loop(realversion, footer, start, logs, endbt,closebt,display,username,mslogin)).start()
+        threading.Thread(target=mc_loop(realversion, footer, launch_bt, start, logs, endbt,closebt,display,username,mslogin)).start()
 
     def get_launch_mc(bind_to):
         def getter():
@@ -162,7 +162,7 @@ def launch():
     def close_footer():
         footer.hide()
         logs.clear()
-        #launch_bt.visible = True
+        launch_bt.visible = True
         start2.enable() # FIXED: only enables one button, the other is still disabled
         start1.enable()
 
@@ -176,7 +176,9 @@ def launch():
             ui.button('关闭', on_click=dialog.close)
 
     with ui.header().classes(replace='row items-center') as header:
-        ui.button(icon='launch', on_click=dialog.open).props('flat color=white').tooltip('LauncherNext')
+        ui.button(icon='launch', on_click=dialog.open).props('flat color=white').tooltip(
+            'LauncherNext v' + __version__
+        )
         with ui.tabs() as tabs:
             ui.tab('启动')
             ui.tab('版本')
@@ -197,9 +199,8 @@ def launch():
             logs = ui.log().style("width: 100%; height: 80%")
             #progressbar = ui.linear_progress(value=0).props('instant-feedback').style("width:100%;")
 
-    #Removed sticky button
-    #with ui.page_sticky(position='bottom-right', x_offset=20, y_offset=20):
-        #launch_bt = ui.button(on_click=launch_mc_now, icon='rocket').props('fab')
+    with ui.page_sticky(position='bottom-right', x_offset=20, y_offset=20):
+        launch_bt = ui.button(on_click=launch_mc_now, icon='rocket').props('fab')
         
 
     with ui.tab_panels(tabs, value='启动').classes('w-full'):
