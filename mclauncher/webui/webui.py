@@ -13,6 +13,7 @@ from nicegui import app
 from ..core.launch import quickstart
 from ..core.utils import *
 from ..core.versions import VersionDecoder, VersionDecoder2
+from ..core.claunch import *
 
 cwd = os.getcwd()
 __version__ = '0.3' 
