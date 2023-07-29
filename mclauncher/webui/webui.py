@@ -175,21 +175,19 @@ def launch():
             ui.label('关于 LauncherNext').style(
                 'color: #6E93D6; font-size: 200%; font-weight: 300'
             )
-            ui.label('LauncherNext v' + __version__)
+            ui.label('LauncherNext' + __version__)
             ui.label('一个由Allen546和DarkstarXD共同开发的webUI轻量级Minecraft启动器。')
             ui.button('关闭', on_click=dialog.close)
 
     with ui.header().classes(replace='row items-center') as header:
-        ui.button(icon='launch', on_click=dialog.open).props('flat color=white').tooltip(
-            'LauncherNext v' + __version__
-        )
+        ui.button(icon='launch', on_click=dialog.open).props('flat color=white').tooltip('LauncherNext')
         with ui.tabs() as tabs:
             ui.tab('启动')
             ui.tab('版本')
             ui.tab('添加实例')
             ui.tab('选项')
 
-    with ui.footer(value=False).style("height:40%") as footer:
+    with ui.footer(value=False).style("height:50%") as footer:
         with ui.row():
             display=ui.label('Minecraft运行中').style('color:#FFFFFF; font-size: 200%; font-weight: 300')
             ui.label('\u00a0')
@@ -199,13 +197,13 @@ def launch():
             endbt.enable()
 
         with ui.column().style("width: 100%; height: 100%"):
+            ui.label('如果日志卡住，请前往[选项->重载]').style('color:#FFFFFF')
             # To use the progressbar(which is developing) with no actual use:
-            logs = ui.log().style("width: 100%; height: 80%")
+            logs = ui.log().style("width: 100%; height: 70%")
             #progressbar = ui.linear_progress(value=0).props('instant-feedback').style("width:100%;")
 
     #with ui.page_sticky(position='bottom-right', x_offset=20, y_offset=20):
         #launch_bt = ui.button(on_click=launch_mc_now, icon='rocket').props('fab')
-        
 
     with ui.tab_panels(tabs, value='启动').classes('w-full'):
         with ui.tab_panel('启动'):
@@ -232,6 +230,7 @@ def launch():
                             # chk_var = ui.checkbox('补全文件 (会拖慢启动速度，但能解决大部分问题)')
                 ui.label('\u00a0')
                 with ui.card():
+                    ui.label('Mincraft实例登录选项')
                     with ui.row():
                         with ui.card():
                             with ui.column():

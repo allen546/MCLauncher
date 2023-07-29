@@ -31,5 +31,6 @@ def quickstart(minecraft_version=LATEST_MINECRAFT_STABLE, JVM=JVM_SHOULD_BE,user
         else:
             command = Command("portablemc", ["start", str(minecraft_version)], {"-u": username})
     c = command.build()
+    print(c)
     p = subprocess.Popen(c, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     return p
