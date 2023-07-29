@@ -2,10 +2,13 @@
 # EDIT ON 07/29/23
 
 import json
+import random
 import os
 import threading
+from datetime import datetime
 
 from nicegui import ui
+from nicegui import app
 
 from ..core.launch import quickstart
 from ..core.utils import *
@@ -13,11 +16,34 @@ from ..core.versions import VersionDecoder, VersionDecoder2
 
 cwd = os.getcwd()
 __version__ = '0.2' 
+dt = datetime.now()
 
-#temporary dummy version list
+#temporary dummy addable version list
 versions_addable=['dummy version 1','dummy version 2','dummy version 3','dummy version 4']
 
+cores=['portablemc','cmcl']
+
 # os.system('mkdir lnxt')
+
+pattern=random.randint(0,1)
+
+if pattern == 0:
+    print('''
+   __                        _                  __          _   
+  / /  __ _ _   _ _ __   ___| |__   ___ _ __ /\ \ \_____  _| |_ 
+ / /  / _` | | | | '_ \ / __| '_ \ / _ \ '__/  \/ / _ \ \/ / __|
+/ /__| (_| | |_| | | | | (__| | | |  __/ | / /\  /  __/>  <| |_ 
+\____/\__,_|\__,_|_| |_|\___|_| |_|\___|_| \_\ \/ \___/_/\_\\__|
+''')
+elif pattern == 1:
+    print('''
+    __                           __              _   __          __ 
+   / /   ____ ___  ______  _____/ /_  ___  _____/ | / /__  _  __/ /_
+  / /   / __ `/ / / / __ \/ ___/ __ \/ _ \/ ___/  |/ / _ \| |/_/ __/
+ / /___/ /_/ / /_/ / / / / /__/ / / /  __/ /  / /|  /  __/>  </ /_  
+/_____/\__,_/\__,_/_/ /_/\___/_/ /_/\___/_/  /_/ |_/\___/_/|_|\__/  
+''')
+print('[INFO] Version '+__version__)
 
 try:
     with open("versions.json", "r") as f:
@@ -51,7 +77,7 @@ def mc_loop(realversion, footer, start2, logs, endbt,closebt,display,username,ms
                         def reload_webui():
                             ui.html('<meta http-equiv="refresh" content="0">')
                         ui.label('错误').style('color: #6E93D6; font-size: 200%; font-weight: 300')
-                        ui.label('LauncherNext 在侦测Minecraft主循环处发生了一个错误。')
+                        ui.label('LauncherNext 在[log输出]位置发生了一个错误。')
                         ui.label('如果你在本地运行，请检查控制台(不是页面内的logs)输出。')
                         ui.label('如果你在访问远程启动器，请提醒服务器提供商这个错误。')
                         ui.label('重载LauncherNext.webUI可能会解决问题，但会丢失与当前Minecraft实例的侦测。')
@@ -81,6 +107,13 @@ def launch():
 
     def reload_webui():
         ui.html('<meta http-equiv="refresh" content="0">')
+
+    async def closeUI():
+        await ui.run_javascript('window.close()',respond=False)
+
+    def handle_connection():
+        global dt
+        dt = datetime.now()
 
     def launch_mc(version_getter):
         footer.show()
@@ -170,17 +203,9 @@ def launch():
         start2.enable() # FIXED: only enables one button, the other is still disabled
         start1.enable()
 
-    with ui.dialog() as dialog, ui.card():
-        with ui.column():
-            ui.label('关于 LauncherNext').style(
-                'color: #6E93D6; font-size: 200%; font-weight: 300'
-            )
-            ui.label('LauncherNext' + __version__)
-            ui.label('一个由Allen546和DarkstarXD共同开发的webUI轻量级Minecraft启动器。')
-            ui.button('关闭', on_click=dialog.close)
-
     with ui.header().classes(replace='row items-center') as header:
-        ui.button(icon='launch', on_click=dialog.open).props('flat color=white').tooltip('LauncherNext')
+        ui.button(icon='cancel',on_click=closeUI).props('flat color=white').tooltip('关闭webUI')
+        ui.button(icon='launch').props('flat color=white').tooltip('LauncherNext')
         with ui.tabs() as tabs:
             ui.tab('启动')
             ui.tab('版本')
@@ -214,20 +239,49 @@ def launch():
             with ui.column():
                 with ui.row():
                     with ui.card():
+                        ui.label('快捷栏')
                         with ui.column():
-                            ui.label('简易启动')
-                            ver_select2 = ui.select(versions, value=str(versions[0]))
-                            start1 = ui.button("启动Minecraft", on_click=get_launch_mc_now(ver_select2))
-                            # ui.button('管理登录', on_click=login).tooltip('管理Littleskin登录通行证')
-                            # chk_var = ui.checkbox('补全文件 (会拖慢启动速度，但能解决大部分问题)')
-                    ui.label('\u00a0')
+                            with ui.card():
+                                with ui.column():
+                                    ui.label('简易启动A')
+                                    ver_select2 = ui.select(versions, value=str(versions[0]))
+                                    start1 = ui.button("一键启动Minecraft", on_click=get_launch_mc_now(ver_select2))
+                                    # ui.button('管理登录', on_click=login).tooltip('管理Littleskin登录通行证')
+                                    # chk_var = ui.checkbox('补全文件 (会拖慢启动速度，但能解决大部分问题)')
+                            with ui.card():
+                                with ui.column():
+                                    ui.label('简易启动B')
+                                    ver_select2 = ui.select(versions, value=str(versions[1]))
+                                    start1 = ui.button("一键启动Minecraft", on_click=get_launch_mc_now(ver_select2))
+                        ui.label('修改...').tooltip('修改快捷栏配置请转到[选项->LauncherNext->编辑快捷栏]')
+                    #ui.label('\u00a0')
                     with ui.card():
                         with ui.column():
                             ui.label('自定义启动')
                             ver_select = ui.select(versions, value=str(versions[0]))
-                            start2 = ui.button("启动Minecraft", on_click=get_launch_mc(ver_select))
-                            # ui.button('管理登录', on_click=login).tooltip('管理Littleskin登录通行证')
-                            # chk_var = ui.checkbox('补全文件 (会拖慢启动速度，但能解决大部分问题)')
+                            ui.switch('强行使用指定Java')
+                            with ui.row():
+                                ui.label('强行指定分配内存(单位GB，仅cmcl核心)')
+                                slider = ui.slider(min=1, max=16, value=2)
+                                ui.label().bind_text_from(slider, 'value')
+                            chkmendfiles = ui.checkbox('强制补全natives（仅cmcl核心)')
+                            display_hidden = ui.checkbox('启用高级选项')
+                            ui.input('JVM额外参数(仅cmcl核心)',placeholder='-XX:+UseG1GC -XX:-UseAdaptiveSizePolicy -XX:-OmitStackTraceInFastThrow -Dfml.ignoreInvalidMinecraftCertificates=True -Dfml.ignorePatchDiscrepancies=True -Dlog4j2.formatMsgNoLookups=true').bind_visibility_from(display_hidden, 'value')
+                            ui.input('启动前执行指令').bind_visibility_from(display_hidden, 'value')
+                            start2 = ui.button("启动", on_click=get_launch_mc(ver_select))
+                    ui.label('\u00a0')
+                    with ui.card():
+                        with ui.column():
+                            ui.label('启动核心选择')
+                            with ui.row():
+                                ui.link('portablemc','https://github.com/mindstorm38/portablemc')
+                                ui.label('一个LauncherNext内置的启动核心，能满足基本的启动需求。')
+                            with ui.row():
+                                ui.link('cmcl','https://github.com/MrShieh-X/console-minecraft-launcher')
+                                ui.label('一个Java版高级启动核心，可满足全部的参数配置。')
+                            core_select = ui.select(cores, value=str(cores[0]))
+                            chkauto = ui.checkbox('智能根据启动需求选择核心')
+                            ui.label('Tip:选择的启动核心不同，启动快慢、启动参数广泛度和Minecraft流畅程度都会有所影响。')
                 ui.label('\u00a0')
                 with ui.card():
                     ui.label('Mincraft实例登录选项')
@@ -284,6 +338,23 @@ def launch():
         with ui.tab_panel('选项'):
             dark = ui.dark_mode()
             with ui.card():
+                ui.label('LauncherNext').style(
+                    'color: #6E93D6; font-size: 200%; font-weight: 300'
+                )
+                with ui.column():
+                    ui.label('一个基于webUI和Python的轻量级Minecraft启动器。')
+                    ui.label('当前版本：'+__version__)
+                    app.on_connect(handle_connection)
+                    label = ui.label()
+                    ui.timer(1, lambda: label.set_text(f'上次连接webUI: {dt:%H:%M:%S}'))
+                    ui.label('由Allen546和DarkstarXD共同开发。')
+                    ui.link('在GitHub上查看LauncherNext的repository','https://github.com/allen546/MCLauncher')
+                    ui.separator()
+                    with ui.row():
+                        ui.button('检查更新')
+                        ui.button('许可与版权声明')
+            ui.label('\u00a0')
+            with ui.card():
                 ui.label('重载').style(
                     'color: #6E93D6; font-size: 200%; font-weight: 300'
                 )
@@ -317,7 +388,7 @@ def launch():
                     switch6 = ui.switch('switch me')
             ui.label('\u00a0')
             with ui.card():
-                ui.label('启动选项').style(
+                ui.label('LauncherNext选项').style(
                     'color: #6E93D6; font-size: 200%; font-weight: 300'
                 )
                 with ui.column():
