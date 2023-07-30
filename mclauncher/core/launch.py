@@ -22,15 +22,15 @@ else:
 def quickstart(minecraft_version=LATEST_MINECRAFT_STABLE, JVM=JVM_SHOULD_BE,username='steve',mslogin='',msarg=''):
     if JVM:
         if msarg == '-m':
-            command = Command("portablemc", ["start", str(minecraft_version), "--jvm="+JVM], {"-u": username, msarg+" -l": mslogin})
+            command = Command("portablemc", ["start", str(minecraft_version), "--jvm='"+JVM+"'"], {"-u": username, msarg+" -l": mslogin})
         else:
-            command = Command("portablemc", ["start", str(minecraft_version), "--jvm="+JVM], {"-u": username})
+            command = Command("portablemc", ["start", str(minecraft_version), "--jvm='"+JVM+"'"], {"-u": username})
     else:
         if msarg == '-m':
             command = Command("portablemc", ["start", str(minecraft_version)], {"-u": username, msarg+" -l": mslogin})
         else:
             command = Command("portablemc", ["start", str(minecraft_version)], {"-u": username})
     c = command.build()
-    print(c)
+    print('生成的启动指令:'+str(c))
     p = subprocess.Popen(c, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     return p
