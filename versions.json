@@ -16,7 +16,7 @@
     },
     {
         "__type__": "MinecraftVersion", 
-        "version": "1.16.5", 
+        "version": "1.20.1-optimized", 
         "type": "release"
     }
 ]
