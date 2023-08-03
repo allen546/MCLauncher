@@ -18,6 +18,10 @@ from ..core.claunch import *
 cwd = os.getcwd()
 __version__ = '0.3' 
 dt = datetime.now()
+init_minecraft_directory()
+dircfg=open(cwd+'/config/mc_inst_dir.cfg')
+mc_dir=dircfg.read()
+subprocess.run('portablemc --main-dir "'+mc_dir+'"')
 
 #temporary dummy addable version list
 versions_addable=['dummy version 1','dummy version 2','dummy version 3','dummy version 4']
@@ -58,39 +62,56 @@ except FileNotFoundError:
     print('[WARN] Config file not detected.')
 
 #Game tracking loop
-def mc_loop(realversion, footer, start2, logs, endbt,closebt,display,username,mslogin,msarg):
+def mc_loop(core, realversion, footer, start2, start3, logs, endbt, closebt, display, username, mslogin, msarg ,mend):
     def real():
-        process = quickstart(minecraft_version=realversion,username=username,mslogin=mslogin,msarg=msarg)
+        if core == 'portablemc':
+            process = quickstart(minecraft_version=realversion,username=username,mslogin=mslogin,msarg=msarg)
+        elif core == 'cmcl':
+            try:
+                process = claunch(vername=realversion,force_mend=mend)
+            except FileNotFoundError:
+                print('[FETAL] NOT logged in with Littleskin!')
+                logs.push('[cmcl] [FETAL] NOT logged in with Littleskin!')
+                logs.push('要使用cmcl启动Minecraft，你需要启用Littleskin登录。')
         endbt.enable()
         closebt.disable()
         display.on_text_change('Minecraft运行中')
         while True:
             # time.sleep(1)
-            if process.poll() is not None:
-                break
             try:
+                if process.poll() is not None:
+                    print('[INFO] Exit code='+process.poll())
+                    logs.push('最终代码:'+process.push())
+                    break
                 ln = process.stdout.readline()
                 print(ln.decode(), end="")
                 logs.push(ln.decode().strip())
             except:
-                with ui.dialog() as dialog, ui.card():
-                    with ui.column():
-                        def reload_webui():
-                            ui.html('<meta http-equiv="refresh" content="0">')
-                        ui.label('错误').style('color: #6E93D6; font-size: 200%; font-weight: 300')
-                        ui.label('LauncherNext 在[log输出]位置发生了一个错误。')
-                        ui.label('如果你在本地运行，请检查控制台(不是页面内的logs)输出。')
-                        ui.label('如果你在访问远程启动器，请提醒服务器提供商这个错误。')
-                        ui.label('重载LauncherNext.webUI可能会解决问题，但会丢失与当前Minecraft实例的侦测。')
-                        with ui.row():
-                            ui.button('重载webUI模块', on_click=reload_webui)
-                            ui.button('继续，忽略该错误', on_click=dialog.close)
+                break
+                #down below are the crash_handler part:
+#                with ui.dialog() as dialog, ui.card():
+#                    with ui.column():
+#                        def reload_webui():
+#                            ui.html('<meta http-equiv="refresh" content="0">')
+#                        def continue_with_error():
+#                            dialog.close()
+#                        ui.label('错误').style('color: #6E93D6; font-size: 200%; font-weight: 300')
+#                        ui.label('LauncherNext 在[log输出]位置发生了一个错误。')
+#                        ui.label('如果你在本地运行，请检查控制台(不是页面内的logs)输出。')
+#                        ui.label('如果你在访问远程启动器，请提醒服务器提供商这个错误。')
+#                        ui.label('重载LauncherNext.webUI可能会解决问题，但会丢失与当前Minecraft实例的侦测。')
+#                        with ui.row():
+#                            ui.button('重载webUI模块', on_click=reload_webui)
+#                            ui.button('继续，忽略该错误', on_click=continue_with_error)
             if ln.decode().strip().endswith("Stopping!"):
                 break
             #Daemon trigger inject here
-        n = process.stdout.read().decode()
-        print(n)
-        logs.push(n)
+        try:
+            n = process.stdout.read().decode()
+            print(n)
+            logs.push(n)
+        except:
+            pass
         endbt.disable()
         closebt.enable()
         display.on_text_change('Minecraft已退出')
@@ -121,6 +142,7 @@ def launch():
         #launch_bt.visible = False
         start = ButtonGroup()
         start.add_button(start2)
+        start.add_button(start3)
         start.add_button(start1)
         start.disable()
         # ver_name = f'"{version}"'
@@ -135,26 +157,39 @@ def launch():
         if checkms.value == True:
             mslogin=emailin.value
             msarg='-m'
+            core='portablemc'
             print("[INFO] Using Microsoft Account ", mslogin)
             logs.push("[LauncherNext] [INFO] Using Microsoft Account "+mslogin)
         else:
             mslogin=''
             msarg=''
+            if checkemail.value == True:
+                core='cmcl'
+            else:
+                core='portablemc'
+        if chkmendfiles.value == True:
+            mend = True
+            core='cmcl'
+        else:
+            mend = False
         version = version_getter()
         realversion = version_dict[version]
         print("[INFO] Starting Minecraft ", version)
         logs.push("[LauncherNext] [INFO] Starting Minecraft "+version)
         # time.sleep(10)
-        threading.Thread(target=mc_loop(realversion, footer, start, logs, endbt,closebt,display,username,mslogin,msarg)).start()
+        threading.Thread(target=mc_loop(core, realversion, footer, start2, start3, logs, endbt, closebt, display, username, mslogin, msarg ,mend)).start()
 
     def launch_mc_now():
         footer.show()
         #launch_bt.visible = False
         start = ButtonGroup()
         start.add_button(start2)
+        start.add_button(start3)
         start.add_button(start1)
         start.disable()
         # ver_name = f'"{version}"'
+        core='portablemc'
+        mend=False
         username=usrinput.value
         print('VAR.user="'+username+'"')
         if username == '':
@@ -174,7 +209,7 @@ def launch():
         print("[INFO] Starting Minecraft ", version)
         logs.push("[LauncherNext] [INFO] Starting Minecraft "+version)
         # time.sleep(10)
-        threading.Thread(target=mc_loop(realversion, footer, start, logs, endbt,closebt,display,username,mslogin,msarg)).start()
+        threading.Thread(target=mc_loop(core, realversion, footer, start2, start3, logs, endbt, closebt, display, username, mslogin, msarg ,mend)).start()
 
     def get_launch_mc(bind_to):
         def getter():
@@ -190,6 +225,12 @@ def launch():
             return launch_mc_now()
         return callback
 
+    def login_littleskin_link():
+        login_littleskin()
+
+    def change_mc_dir():
+        edit_minecraft_directory(mcdir_in.value)
+
     def end_forcely():
         if os.name == "nt":
             os.system('taskkill /f /im java.exe')
@@ -201,6 +242,7 @@ def launch():
         footer.hide()
         logs.clear()
         #launch_bt.visible = True
+        start3.enable()
         start2.enable() # FIXED: only enables one button, the other is still disabled
         start1.enable()
 
@@ -223,7 +265,7 @@ def launch():
             endbt.enable()
 
         with ui.column().style("width: 100%; height: 100%"):
-            ui.label('如果日志卡住，请前往[选项->重载]').style('color:#FFFFFF')
+            ui.label('运行中如果日志卡住，请前往[选项->重载]').style('color:#FFFFFF')
             # To use the progressbar(which is developing) with no actual use:
             logs = ui.log().style("width: 100%; height: 70%")
             #progressbar = ui.linear_progress(value=0).props('instant-feedback').style("width:100%;")
@@ -234,6 +276,7 @@ def launch():
     with ui.tab_panels(tabs, value='启动').classes('w-full'):
         with ui.tab_panel('启动'):
             ui.label('启动面板').style('color: #6E93D6; font-size: 200%; font-weight: 300')
+            ui.label('安装文件夹: '+mc_dir)
             ui.label('\u00a0')  # Added some spaces through the interface
             ui.separator()
             ui.label('\u00a0')
@@ -253,8 +296,8 @@ def launch():
                                 with ui.column():
                                     ui.label('简易启动B')
                                     ver_select2 = ui.select(versions, value=str(versions[1]))
-                                    start1 = ui.button("一键启动Minecraft", on_click=get_launch_mc_now(ver_select2))
-                        ui.label('修改...').tooltip('修改快捷栏配置请转到[选项->LauncherNext->编辑快捷栏]')
+                                    start3 = ui.button("一键启动Minecraft", on_click=get_launch_mc_now(ver_select2))
+                        ui.label('快捷启动全部使用portablemc核心')
                     #ui.label('\u00a0')
                     with ui.card():
                         with ui.column():
@@ -296,9 +339,7 @@ def launch():
                             with ui.column():
                                 checkemail = ui.checkbox('启用Littleskin登录')
                                 ui.label('免费的Authlib注入登录方式').bind_visibility_from(checkemail, 'value')
-                                ui.input('email或用户名').bind_visibility_from(checkemail, 'value')
-                                ui.input('密码',password=True,password_toggle_button=True).bind_visibility_from(checkemail, 'value')
-                                ui.button('保存/刷新 登录Token').bind_visibility_from(checkemail, 'value')
+                                ui.button('添加登录Token',on_click=login_littleskin_link).bind_visibility_from(checkemail, 'value')
                                 ui.link('注册Littleskin账户','https://littleskin.cn/auth/register').bind_visibility_from(checkemail, 'value')
                                 ui.link('浏览皮肤库','https://littleskin.cn/skinlib').bind_visibility_from(checkemail, 'value')
                         with ui.card():
@@ -381,6 +422,9 @@ def launch():
                     'color: #6E93D6; font-size: 200%; font-weight: 300'
                 )
                 with ui.column():
+                    with ui.row():
+                        mcdir_in = ui.input('实例安装路径',placeholder=mc_dir)
+                        ui.button('保存并应用',on_click=change_mc_dir)
                     switch1 = ui.switch('启用版本隔离')
                     switch2 = ui.switch('强制使用指定Java')
                     switch3 = ui.switch('DUMMY SWITCH')
