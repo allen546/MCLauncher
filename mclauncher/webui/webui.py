@@ -70,9 +70,9 @@ def mc_loop(core, realversion, footer, start2, start3, logs, endbt, closebt, dis
             try:
                 process = claunch(vername=realversion,force_mend=mend)
             except FileNotFoundError:
-                print('[FETAL] NOT logged in with Littleskin!')
-                logs.push('[cmcl] [FETAL] NOT logged in with Littleskin!')
-                logs.push('要使用cmcl启动Minecraft，你需要启用Littleskin登录。')
+                print('[FETAL] NOT logged in with Littleskin or version not found.')
+                logs.push('[cmcl] [FETAL] NOT logged in with Littleskin or version not found.')
+                logs.push('要使用cmcl启动Minecraft，你需要启用Littleskin登录。如果问题仍然存在，你可能是指定了不存在的版本。')
         endbt.enable()
         closebt.disable()
         display.on_text_change('Minecraft运行中')
