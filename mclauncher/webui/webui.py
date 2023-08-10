@@ -1,5 +1,5 @@
 
-# EDIT ON 07/30/23
+# EDIT ON 08/10/23
 
 import json
 import random
@@ -14,9 +14,10 @@ from ..core.launch import quickstart
 from ..core.utils import *
 from ..core.versions import VersionDecoder, VersionDecoder2
 from ..core.claunch import *
+from ..core.updatemgr import *
 
 cwd = os.getcwd()
-__version__ = '0.3' 
+__version__ = '0.4' 
 dt = datetime.now()
 init_minecraft_directory()
 dircfg=open(cwd+'/config/mc_inst_dir.cfg')
@@ -57,9 +58,9 @@ try:
         version2 = json.loads(f.read(), object_hook=VersionDecoder)
         version_dict = dict(zip(versions, version2))
         # print(version_dict)
-        print('[INFO] Config loaded.')
+        print('[INFO] Versions config loaded.')
 except FileNotFoundError:
-    print('[WARN] Config file not detected.')
+    print('[WARN] Version config file not detected.')
 
 #Game tracking loop
 def mc_loop(core, realversion, footer, start2, start3, logs, endbt, closebt, display, username, mslogin, msarg ,mend):
@@ -136,6 +137,16 @@ def launch():
     def handle_connection():
         global dt
         dt = datetime.now()
+
+    def chkupdate():
+        try:
+            updateALL('https://github.com/allen546/MCLauncher',cwd)
+        except:
+            print('[ERROR] Update Failed.')
+            with ui.dialog():
+                with ui.card():
+                    ui.label('更新失败，请检查网络连接')
+                    ui.button('关闭')
 
     def launch_mc(version_getter):
         footer.show()
@@ -393,7 +404,7 @@ def launch():
                     ui.link('在GitHub上查看LauncherNext的repository','https://github.com/allen546/MCLauncher')
                     ui.separator()
                     with ui.row():
-                        ui.button('检查更新')
+                        ui.button('检查更新',on_click=chkupdate)
                         ui.button('许可与版权声明')
             ui.label('\u00a0')
             with ui.card():
