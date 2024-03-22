@@ -22,7 +22,7 @@ dt = datetime.now()
 init_minecraft_directory()
 dircfg=open(cwd+'/config/mc_inst_dir.cfg')
 mc_dir=dircfg.read()
-subprocess.run('portablemc --main-dir "'+mc_dir+'"')
+#subprocess.run('portablemc --main-dir "'+mc_dir+'"')
 
 #temporary dummy addable version list
 versions_addable=['dummy version 1','dummy version 2','dummy version 3','dummy version 4']
@@ -130,9 +130,6 @@ def launch():
 
     def reload_webui():
         ui.html('<meta http-equiv="refresh" content="0">')
-
-    async def closeUI():
-        await ui.run_javascript('window.close()',respond=False)
 
     def handle_connection():
         global dt
@@ -258,8 +255,6 @@ def launch():
         start1.enable()
 
     with ui.header().classes(replace='row items-center') as header:
-        ui.button(icon='cancel',on_click=closeUI).props('flat color=white').tooltip('关闭webUI')
-        ui.button(icon='launch').props('flat color=white').tooltip('LauncherNext')
         with ui.tabs() as tabs:
             ui.tab('启动')
             ui.tab('版本')
